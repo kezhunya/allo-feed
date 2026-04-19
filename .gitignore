@@ -1,0 +1,16 @@
+.DS_Store
+__pycache__/
+*.pyc
+backups/
+
+# Generated artifacts
+update_allo.xml
+update_allo_report.xlsx
+update_allo_color_fallbacks.xlsx
+update_allo_color_fallbacks_review.xlsx
+update_allo_param_duplicates_all.xlsx
+update_allo_param_duplicates_engineering.xlsx
+
+# One-time helper workbooks
+ALLO_цвета_ручное_сопоставление.xlsx
+Временное_сопоставление_разделов_ALLO_backup*.xlsx

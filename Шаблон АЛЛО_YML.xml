@@ -1,0 +1,44 @@
+<yml_catalog date="2022-11-18 15:00">
+  <shop>
+    <name>Test</name>
+    <company>Test company</company>
+    <url>https://test.com.ua/</url>
+    <currencies>
+      <currency id="USD" rate="CB"/>
+      <currency id="UAH" rate="1"/>
+      <currency id="BYN" rate="CB"/>
+      <currency id="KZT" rate="CB"/>
+      <currency id="EUR" rate="CB"/>
+    </currencies>
+    <categories>
+      <category id="104859252" parentId="104859207">Металлические ремешки миланская петля</category>
+    </categories>
+    <offers>
+      <offer id="1506216864" available="true" group_id="374150249">
+        <url>https://test.ua/p1506216864-remeshok-apple-watch.html</url>
+        <salePrice>299</salePrice>
+        <price>399</price>
+        <currencyId>UAH</currencyId>
+        <categoryId>104859252</categoryId>
+        <picture>https://test.ua/4060114143_remeshok-apple-watch.jpg</picture>
+        <pickup>false</pickup>
+        <delivery>true</delivery>
+        <name>Ремешок Apple Watch 41/40/38mm миланская петля</name>
+        <name_ua>Ремінець Apple Watch 41/40/38mm міланська петля</name_ua>
+        <vendor>Solis</vendor>
+        <vendorCode>1506216864</vendorCode>
+        <country_of_origin>Китай</country_of_origin>
+        <description>Ремешок гипоаллергенный из нержавеющей стали подходит для моделей Apple Watch 38mm, Apple Watch 40mm, Apple Watch 41mm. Магнитная застежка позволяет легко регулировать длину браслета в зависимости от размера руки обладателя. Ремешок представлен в популярном переплете миланская петля. Дизайн браслета отлично подходит под классический и деловой стиль, а так же кэжуал и даже спортивный. Разнообразие палитры поможет вам подобрать цвет на любой вкус. Материал: Нержавеющая сталь </description>
+        <description_ua>Ремінець гіпоалергенний з нержавіючої сталі підходить для моделей Apple Watch 38mm, Apple Watch 40mm, Apple Watch 41mm. Магнітна застібка дозволяє легко регулювати довжину браслета в залежності від розміру руки власника. Ремінець представлений у популярному плетіння міланська петля. Дизайн браслета відмінно підходить під класичний і діловий стиль, а також кежуал і навіть спортивний. Різноманітність палітри допоможе вам підібрати колір на будь-який смак. Матеріал: Нержавіюча сталь </description_ua>
+        <param name="Материал">Металл</param>
+        <param name="Тип">Ремешок</param>
+        <param name="Цвет">Разные цвета</param>
+        <param name="Состояние">Новое</param>
+        <param name="Совместимость" unit="">Apple Watch 38mm|Apple Watch 40mm|Apple Watch 42mm|Apple Watch 44mm</param>
+        <param name="Максимальна длина ремешка" unit="">20 см</param>
+        <param name="Минимальная длина ремешка" unit="">11 см</param>
+        <param name="Amazfit" unit="">Apple Watch 38 mm|Apple Watch 40 mm|Apple Watch 41 mm</param>
+      </offer>
+    </offers>
+  </shop>
+</yml_catalog>
