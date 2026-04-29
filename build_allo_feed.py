@@ -1706,25 +1706,26 @@ def build_param_pairs(
         source_key = normalize_key(source_name)
         mat_key = normalize_key(param_value("Материал", "Матеріал"))
 
-        # Материал ванны из типа раздела/параметра.
+        # Материал ванны задается правилом раздела. Это не эвристика:
+        # "Стальные ванны" всегда должны стать "Материал=Сталь" и т.д.
         if "акрил" in source_key or "акрил" in mat_key:
-            replace_if_filter_exists("Материал", "Акрил")
+            replace_pair("Материал", "Акрил")
         elif "гидромассажн" in source_key:
-            replace_if_filter_exists("Материал", "Акрил")
+            replace_pair("Материал", "Акрил")
         elif any(token in source_key for token in ("сталь", "стальные")) or "сталь" in mat_key:
-            replace_if_filter_exists("Материал", "Сталь")
+            replace_pair("Материал", "Сталь")
         elif any(token in source_key for token in ("чугун", "чугунные")) or "чугун" in mat_key:
-            replace_if_filter_exists("Материал", "Чугун")
+            replace_pair("Материал", "Чугун")
         elif any(token in source_key for token in ("из камня", "каменн", "мрамор", "кварил")) or any(token in mat_key for token in ("искусственн", "литьевой камень", "камень", "мрамор", "кварил")):
-            replace_if_filter_exists("Материал", "Искусственный камень")
+            replace_pair("Материал", "Искусственный камень")
         elif "акрил" in text_key:
-            replace_if_filter_exists("Материал", "Акрил")
+            replace_pair("Материал", "Акрил")
         elif "чугун" in text_key:
-            replace_if_filter_exists("Материал", "Чугун")
+            replace_pair("Материал", "Чугун")
         elif "сталь" in text_key:
-            replace_if_filter_exists("Материал", "Сталь")
+            replace_pair("Материал", "Сталь")
         elif any(token in text_key for token in ("искусственн", "камень", "мрамор", "кварил")):
-            replace_if_filter_exists("Материал", "Искусственный камень")
+            replace_pair("Материал", "Искусственный камень")
 
         # Длина/ширина: берём значение источника и приводим к канону ALLO ("... см").
         length_raw = clean_text(param_value("Длинна, см", "Длина, см", "Довжина, см", "длина, см", "довжина, см", "Размер"))
@@ -1907,7 +1908,7 @@ def build_param_pairs(
             if rule.skip_feed:
                 continue
             for filter_name, target_value in rule.assignments:
-                replace_if_filter_exists(filter_name, target_value)
+                replace_pair(filter_name, target_value)
 
     def add_shower_glass_group_fixed_rules() -> None:
         shower_glass_titles = {
@@ -3785,6 +3786,10 @@ def build_param_pairs(
     add_global_color_fixed_rules()
     add_global_country_guarantee_rules()
     apply_section_rules_strict()
+    # Старые правила из книги могут содержать "грязные" значения материала
+    # (например, "Сталь покрытая порошковой краской"). Канон по разделам ванн
+    # должен быть финальным: Сталь / Акрил / Чугун / Искусственный камень.
+    add_bath_fixed_rules()
     resolve_fittings_water_diameter_conflict()
     dedupe_single_select_filters()
 

@@ -1066,9 +1066,13 @@ def load_section_fixed_rules() -> list[SectionFixedRule]:
                 break
             if first and not str(first).isdigit():
                 break
+            selector_text = normalize_text(selector).lower()
+            if selector_text.startswith("наш раздел="):
+                selector = selector.split("=", 1)[1].strip()
+
             # Эта загрузка используется только для простых правил уровня раздела.
-            # Условные строки вида "Раздел+Параметр=Значение" оставляем для будущего
-            # ALLO feed generator и не пытаемся грубо расплющивать здесь.
+            # Условные строки вида "Раздел+Параметр=Значение" не расплющиваем,
+            # но строки "Наш раздел=..." являются обычным селектором раздела.
             if "+" in selector or "=" in selector:
                 continue
             selector = strip_selector_conditions(selector)
