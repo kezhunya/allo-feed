@@ -1908,6 +1908,13 @@ def build_param_pairs(
             if rule.skip_feed:
                 continue
             for filter_name, target_value in rule.assignments:
+                value_key = normalize_key(target_value)
+                # В правилах встречаются не значения ALLO, а инструкции вида:
+                # "Вид=Унитаз / Унитаз-биде по Тип унитаза". Такой текст
+                # нельзя публиковать как значение фильтра; его закрывают
+                # отдельные фикс-правила ниже.
+                if " по " in f" {value_key} ":
+                    continue
                 replace_pair(filter_name, target_value)
 
     def add_shower_glass_group_fixed_rules() -> None:
@@ -3786,6 +3793,9 @@ def build_param_pairs(
     add_global_color_fixed_rules()
     add_global_country_guarantee_rules()
     apply_section_rules_strict()
+    # После книжных правил повторно применяем условия, где в книге записана
+    # трактовка, а не буквальное значение (например "Унитаз / Унитаз-биде по Тип унитаза").
+    add_toilet_fixed_rules()
     # Старые правила из книги могут содержать "грязные" значения материала
     # (например, "Сталь покрытая порошковой краской"). Канон по разделам ванн
     # должен быть финальным: Сталь / Акрил / Чугун / Искусственный камень.
