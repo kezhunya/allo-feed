@@ -2155,8 +2155,52 @@ def build_param_pairs(
             replace_if_filter_exists("Тип", "Клавиша смыва")
 
     def add_ventilyatory_fixed_rules() -> None:
-        if target_title != "Вытяжные вентиляторы":
+        source_key = normalize_key(source_name)
+        is_ventilation_source = (
+            "вытяжные вентиляторы" in source_key
+            or "бытовые рекуператоры" in source_key
+        )
+        if target_title != "Вытяжные вентиляторы" and not is_ventilation_source:
             return
+
+        replace_if_filter_exists("Тип", "Осевой")
+
+        noise_db: float | None = None
+        for match in re.finditer(r"дб\s*(?:\(?а\)?)?", text_blob, flags=re.IGNORECASE):
+            start = max(0, match.start() - 120)
+            end = min(len(text_blob), match.end() + 80)
+            segment = text_blob[start:end]
+            if not re.search(r"шум|звук", segment, flags=re.IGNORECASE):
+                continue
+            nums: list[float] = []
+            after_unit = re.search(
+                r"дб\s*(?:\(?а\)?)?\s*(?:\(?\s*на\s+3\s*м\s*\)?)?\s*(?:3\s*м\s*)?(?::\s*)?(\d+(?:[.,]\d+)?)(?:\s*[-–—]\s*(\d+(?:[.,]\d+)?))?",
+                segment,
+                flags=re.IGNORECASE,
+            )
+            before_unit = re.search(
+                r"(\d+(?:[.,]\d+)?)(?:\s*[-–—]\s*(\d+(?:[.,]\d+)?))?\s*(?:&(?:amp;)?nbsp;|\xa0|\s)*дб",
+                segment,
+                flags=re.IGNORECASE,
+            )
+            noise_match = after_unit or before_unit
+            if noise_match:
+                for raw in noise_match.groups():
+                    if not raw:
+                        continue
+                    try:
+                        nums.append(float(raw.replace(",", ".")))
+                    except ValueError:
+                        continue
+            if nums:
+                # Для диапазонов берём минимальное значение, как в правиле.
+                noise_db = min(nums)
+                break
+        if noise_db is not None:
+            resolved_noise = pick_nearest_allowed_by_number("Уровень шума", noise_db)
+            if resolved_noise:
+                replace_if_filter_exists("Уровень шума", resolved_noise)
+
         duct_num = extract_first_number(param_value("Диаметр воздуховода", "Диаметр патрубка, мм"))
         if duct_num is not None:
             resolved_duct = choose_allowed("Диаметр воздуховода", "Диаметр патрубка, мм", str(int(round(duct_num))))
