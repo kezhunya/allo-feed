@@ -43,10 +43,8 @@ COLOR_FIX_REPORT_XLSX = ALLO_DIR / "update_allo_color_fallbacks.xlsx"
 BASE_XML = TMP_DIR / "aquafavorit_source.xml"
 ROZETKA_XML = TMP_DIR / "rozetka_source.xml"
 BASE_BACKUP_XML = BACKUP_DIR / "aquafavorit_last.xml"
-ROZETKA_BACKUP_XML = BACKUP_DIR / "parserbiz_last.xml"
+ROZETKA_BACKUP_XML = BACKUP_DIR / "new_parser_last.xml"
 LEGACY_BASE_BACKUP_XML = LEGACY_BACKUP_DIR / "aquafavorit_last.xml"
-LEGACY_ROZETKA_BACKUP_XML = LEGACY_BACKUP_DIR / "rozetka_last.xml"
-LEGACY_ROZETKA_BACKUP_XML_ALT = LEGACY_BACKUP_DIR / "parserbiz_last.xml"
 
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ALLO_DIR))
@@ -208,10 +206,6 @@ def fallback_candidates_for(backup: Path) -> list[Path]:
     if backup == BASE_BACKUP_XML:
         candidates.append(LEGACY_BASE_BACKUP_XML)
         candidates.extend(maudau.BASE_BACKUP_CANDIDATES)
-    elif backup == ROZETKA_BACKUP_XML:
-        candidates.append(LEGACY_ROZETKA_BACKUP_XML)
-        candidates.append(LEGACY_ROZETKA_BACKUP_XML_ALT)
-        candidates.extend(maudau.ROZETKA_BACKUP_CANDIDATES)
     return candidates
 
 
@@ -4062,9 +4056,9 @@ def main() -> int:
     else:
         maudau.update_source_failure(sources_state, "aquafavorit")
     if rozetka_loaded_from_source:
-        maudau.update_source_success(sources_state, "parserbiz", rozetka_path)
+        maudau.update_source_success(sources_state, "new_parser", rozetka_path)
     else:
-        maudau.update_source_failure(sources_state, "parserbiz")
+        maudau.update_source_failure(sources_state, "new_parser")
     if google_loaded_from_source:
         google_used_path = maudau.GOOGLE_TABLE_BACKUP_CSV
         if google_used_path.exists():
@@ -4077,7 +4071,7 @@ def main() -> int:
 
     stale_issue_rows: list[dict] = []
     stale_defs = [
-        ("parserbiz", "Исходник Parser.biz", rozetka_fallback_path or resolve_backup_path(ROZETKA_BACKUP_XML), "parserbiz_last.xml"),
+        ("new_parser", "Исходник New Parser", rozetka_fallback_path or resolve_backup_path(ROZETKA_BACKUP_XML), "new_parser_last.xml"),
         ("aquafavorit", "Исходник AquaFavorit", base_fallback_path or resolve_backup_path(BASE_BACKUP_XML), "aquafavorit_last.xml"),
         ("google_sheet", "Google Sheet", google_fallback_path or maudau.resolve_google_table_backup_path(), "google_table_last.csv"),
     ]
