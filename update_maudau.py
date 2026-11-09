@@ -16,7 +16,7 @@ from lxml import etree as ET
 from openpyxl import Workbook
 
 BASE_FEED_URL = "https://aqua-favorit.com.ua/content/export/b0026fd850ce11bb0cb7610e252d7dae.xml"
-ROZETKA_FEED_URL = "http://parser.biz.ua/Aqua/api/export.aspx?action=rozetka&key=ui82P2VotQQamFTj512NQJK3HOlKvyv7"
+ROZETKA_FEED_URL = "https://feeds.aqua-favorit.com.ua/aquafavorit_rozetka.xml"
 GOOGLE_TABLE_CSV_URL = (
     "https://docs.google.com/spreadsheets/d/"
     "1S6L2iLlvJzDf2vNBoSPRwEuoEIP_muojrT-00KshR_c/gviz/tq?tqx=out:csv&gid=0"
@@ -60,9 +60,8 @@ LEGACY_BACKUP_DIR = MAUDAU_DIR / "backups"
 LEGACY_BACKUP_DIR.mkdir(parents=True, exist_ok=True)
 BACKUP_DIR = SHARED_BACKUP_DIR
 BASE_BACKUP_XML = BACKUP_DIR / "aquafavorit_last.xml"
-ROZETKA_BACKUP_XML = BACKUP_DIR / "parserbiz_last.xml"
+ROZETKA_BACKUP_XML = BACKUP_DIR / "new_parser_last.xml"
 LEGACY_BASE_BACKUP_XML = LEGACY_BACKUP_DIR / "aquafavorit_last.xml"
-LEGACY_ROZETKA_BACKUP_XML = LEGACY_BACKUP_DIR / "parserbiz_last.xml"
 SOURCES_STATE_JSON = BACKUP_DIR / "sources_state_maudau.json"
 SOURCE_STALE_HOURS = int(os.environ.get("SOURCE_STALE_HOURS", "48"))
 LOCAL_ENV_FILE = Path(__file__).resolve().parent / ".env"
@@ -75,15 +74,7 @@ GOOGLE_TABLE_BACKUP_CSV = BACKUP_DIR / "google_table_last.csv"
 GOOGLE_SETTINGS_BACKUP_JSON = BACKUP_DIR / "google_settings_last.json"
 LEGACY_GOOGLE_TABLE_BACKUP_CSV = LEGACY_BACKUP_DIR / "google_table_last.csv"
 LEGACY_GOOGLE_SETTINGS_BACKUP_JSON = LEGACY_BACKUP_DIR / "google_settings_last.json"
-ROZETKA_BACKUP_CANDIDATES = [
-    Path(os.environ.get("ROZETKA_LOCAL_XML", "")).expanduser(),
-    ROZETKA_BACKUP_XML,
-    LEGACY_ROZETKA_BACKUP_XML,
-    MAUDAU_DIR / "https-::parser.biz.ua:Aqua:api:export.aspx?action=rozetka&key=ui82P2VotQQamFTj512NQJK3HOlKvyv7",
-    MAUDAU_DIR / "rozetka.xml",
-    Path("rozetka.xml"),
-    ROZETKA_XML,
-]
+ROZETKA_BACKUP_CANDIDATES = [ROZETKA_BACKUP_XML]
 
 BASE_BACKUP_CANDIDATES = [
     Path(os.environ.get("BASE_LOCAL_XML", "")).expanduser(),
@@ -3393,7 +3384,7 @@ def main() -> int:
             )
             ET.parse(str(ROZETKA_XML))
             shutil.copy2(ROZETKA_XML, ROZETKA_BACKUP_XML)
-            update_source_success(sources_state, "parserbiz", ROZETKA_XML)
+            update_source_success(sources_state, "new_parser", ROZETKA_XML)
         except Exception as rozetka_exc:
             backup = resolve_rozetka_backup_path()
             if backup is None:
@@ -3403,7 +3394,7 @@ def main() -> int:
             rozetka_fallback_path = backup
             if backup.resolve() != ROZETKA_BACKUP_XML.resolve():
                 shutil.copy2(backup, ROZETKA_BACKUP_XML)
-            update_source_failure(sources_state, "parserbiz")
+            update_source_failure(sources_state, "new_parser")
             print(f"⚠ Розетка недоступна, используем локальный файл: {backup}")
 
         base_path = BASE_XML
@@ -3438,7 +3429,7 @@ def main() -> int:
         save_sources_state(sources_state)
         stale_issue_rows: list[dict] = []
         stale_defs = [
-            ("parserbiz", "Исходник Parser.biz", resolve_rozetka_backup_path(), "parserbiz_last.xml"),
+            ("new_parser", "Исходник New Parser", resolve_rozetka_backup_path(), "new_parser_last.xml"),
             ("aquafavorit", "Исходник AquaFavorit", resolve_base_backup_path(), "aquafavorit_last.xml"),
             ("google_sheet", "Google Sheet", resolve_google_table_backup_path(), "google_table_last.csv"),
         ]
